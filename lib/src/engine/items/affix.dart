@@ -1,5 +1,6 @@
 import '../core/element.dart';
 import '../hero/stat.dart';
+import 'item.dart';
 
 /// A modifier that can be applied to an [Item] to change its capabilities.
 /// For example, in a "Dagger of Wounding", the "of Wounding" part is an affix.
@@ -46,7 +47,7 @@ class Affix {
         brand = brand ?? Element.none,
         armor = armor ?? 0,
         priceBonus = priceBonus ?? 0,
-        priceScale = priceScale ?? 1.0 {}
+        priceScale = priceScale ?? 1.0;
 
   int resistance(Element element) => _resists[element] ?? 0;
 

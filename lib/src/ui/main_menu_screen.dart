@@ -61,9 +61,7 @@ class MainMenuScreen extends Screen<Input> {
   final Storage storage;
   int selectedHero = 0;
 
-  MainMenuScreen(Content content)
-      : content = content,
-        storage = Storage(content);
+  MainMenuScreen(this.content) : storage = Storage(content);
 
   bool handleInput(Input input) {
     switch (input) {
@@ -105,8 +103,8 @@ class MainMenuScreen extends Screen<Input> {
     return false;
   }
 
-  void activate(Screen screen, result) {
-    if (screen is ConfirmPopup && result == 'delete') {
+  void activate(Screen popped, Object result) {
+    if (popped is ConfirmPopup && result == 'delete') {
       storage.heroes.removeAt(selectedHero);
       if (selectedHero > 0 && selectedHero >= storage.heroes.length) {
         selectedHero--;
@@ -139,7 +137,7 @@ class MainMenuScreen extends Screen<Input> {
 
     terminal.writeAt(10, 18, 'Which hero shall you play?', UIHue.text);
 
-    if (storage.heroes.length == 0) {
+    if (storage.heroes.isEmpty) {
       terminal.writeAt(
           10, 20, '(No heroes. Please create a new one.)', UIHue.helpText);
     }

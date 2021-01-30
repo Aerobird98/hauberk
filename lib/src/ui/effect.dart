@@ -148,7 +148,7 @@ void addEffects(List<Effect> effects, Event event) {
   }
 }
 
-typedef void DrawGlyph(int x, int y, Glyph glyph);
+typedef DrawGlyph = void Function(int x, int y, Glyph glyph);
 
 abstract class Effect {
   bool update(Game game);
@@ -333,8 +333,8 @@ class ParticleEffect implements Effect {
   final Color color;
 
   ParticleEffect(this.x, this.y, this.color) {
-    final theta = rng.range(628) / 100;
-    final radius = rng.range(30, 40) / 100;
+    var theta = rng.range(628) / 100;
+    var radius = rng.range(30, 40) / 100;
 
     h = math.cos(theta) * radius;
     v = math.sin(theta) * radius;
@@ -345,7 +345,7 @@ class ParticleEffect implements Effect {
     x += h;
     y += v;
 
-    final pos = Vec(x.toInt(), y.toInt());
+    var pos = Vec(x.toInt(), y.toInt());
     if (!game.stage.bounds.contains(pos)) return false;
     if (!game.stage[pos].isFlyable) return false;
 
@@ -516,7 +516,7 @@ class TreasureEffect implements Effect {
         _y = pos.y;
 
   bool update(Game game) {
-    if (_life % 2 == 0) {
+    if (_life.isEven) {
       _y--;
       if (_y < 0) return false;
     }
@@ -549,7 +549,7 @@ class HowlEffect implements Effect {
   void render(Game game, DrawGlyph drawGlyph) {
     var pos = _actor.pos;
 
-    if ((_age ~/ 6) % 2 == 0) {
+    if ((_age ~/ 6).isEven) {
       drawGlyph(pos.x, pos.y, bang);
       drawGlyph(pos.x - 1, pos.y, greater);
       drawGlyph(pos.x + 1, pos.y, less);
@@ -580,7 +580,7 @@ class BlinkEffect implements Effect {
   void render(Game game, DrawGlyph drawGlyph) {
     var pos = _actor.pos;
 
-    if ((_age ~/ 6) % 2 == 1) {
+    if ((_age ~/ 6).isOdd) {
       drawGlyph(pos.x, pos.y, _glyph);
     }
   }

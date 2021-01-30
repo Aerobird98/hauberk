@@ -70,7 +70,7 @@ abstract class Action {
   }
 
   void addEvent(EventType type,
-      {Actor actor, Element element, other, Vec pos, Direction dir}) {
+      {Actor actor, Element element, Object other, Vec pos, Direction dir}) {
     _game.addEvent(type,
         actor: actor, element: element, pos: pos, dir: dir, other: other);
   }
@@ -109,21 +109,22 @@ abstract class Action {
     return ActionResult.alternate(action);
   }
 
-  /// Returns [success] if [done] is `true`, otherwise returns [notDone].
+  /// Returns [ActionResult.success] if [done] is `true`, otherwise returns
+  /// [ActionResult.notDone].
   ActionResult doneIf(bool done) {
     return done ? ActionResult.success : ActionResult.notDone;
   }
 }
 
 class ActionResult {
-  static final success = const ActionResult(succeeded: true, done: true);
-  static final failure = const ActionResult(succeeded: false, done: true);
-  static final notDone = const ActionResult(succeeded: true, done: false);
+  static const success = ActionResult(succeeded: true, done: true);
+  static const failure = ActionResult(succeeded: false, done: true);
+  static const notDone = ActionResult(succeeded: true, done: false);
 
   /// An alternate [Action] that should be performed instead of the one that
   /// failed to perform and returned this. For example, when the [Hero] walks
-  /// into a closed door, the [WalkAction] will fail (the door is closed) and
-  /// return an alternate [OpenDoorAction] instead.
+  /// into a closed door, a WalkAction will fail (the door is closed) and
+  /// return an alternate OpenDoorAction instead.
   final Action alternative;
 
   /// `true` if the [Action] was successful and energy should be consumed.
@@ -166,7 +167,7 @@ mixin GeneratorActionMixin on Action {
 
   ActionResult onPerform() {
     // Start the generator the first time through.
-    if (_iterator == null) _iterator = onGenerate().iterator;
+    _iterator ??= onGenerate().iterator;
 
     // If it reaches the end, it succeeds.
     if (!_iterator.moveNext()) return ActionResult.success;
@@ -177,7 +178,7 @@ mixin GeneratorActionMixin on Action {
   /// Wait a single frame.
   ActionResult waitOne() => ActionResult.notDone;
 
-  /// Wait [frame] frames.
+  /// Wait [frames] frames.
   Iterable<ActionResult> wait(int frames) =>
       List.generate(frames, (_) => ActionResult.notDone);
 

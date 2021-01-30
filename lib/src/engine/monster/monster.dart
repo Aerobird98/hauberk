@@ -12,7 +12,6 @@ import '../core/game.dart';
 import '../core/log.dart';
 import '../core/math.dart';
 import '../hero/hero.dart';
-import '../stage/lighting.dart';
 import '../stage/tile.dart';
 import 'breed.dart';
 import 'monster_states.dart';
@@ -81,7 +80,7 @@ class Monster extends Actor {
 
   double get fear => _fear;
 
-  get appearance => breed.appearance;
+  Object get appearance => breed.appearance;
 
   String get nounText => 'the ${breed.name}';
 
@@ -138,12 +137,12 @@ class Monster extends Actor {
   /// and the target.
   bool canView(Vec target) {
     // Walk to the target.
-    for (final step in Line(pos, target)) {
+    for (var step in Line(pos, target)) {
       if (step == target) return true;
       if (game.stage[step].blocksView) return false;
     }
 
-    throw 'unreachable';
+    throw AssertionError("Unreachable.");
   }
 
   /// Gets whether or not this monster has a line of sight to [target].
@@ -152,13 +151,13 @@ class Monster extends Actor {
   /// and the target.
   bool canTarget(Vec target) {
     // Walk to the target.
-    for (final step in Line(pos, target)) {
+    for (var step in Line(pos, target)) {
       if (step == target) return true;
       if (game.stage.actorAt(step) != null) return false;
       if (game.stage[step].blocksView) return false;
     }
 
-    throw 'unreachable';
+    throw AssertionError("Unreachable.");
   }
 
   int get baseSpeed => Energy.normalSpeed + breed.speed;
@@ -265,8 +264,8 @@ class Monster extends Actor {
     }
 
     // TODO: Don't check illumination for breeds that see in the dark.
-    var illumination = game.stage[heroPos].illumination / Lighting.max;
-    if (illumination == 0.0) {
+    var illumination = game.stage[heroPos].illumination;
+    if (illumination == 0) {
       Debug.monsterStat(this, "see", 0.0, "hero in dark");
       return 0.0;
     }
@@ -344,7 +343,7 @@ class Monster extends Actor {
 
     _modifyFear(-fear);
     Debug.monsterReason(this, "fear",
-        "hit for ${damage}/${game.hero.maxHealth} decrease by ${fear}");
+        "hit for $damage/${game.hero.maxHealth} decrease by $fear");
 
     // Nearby monsters may witness it.
     _updateWitnesses((witness) {
@@ -440,7 +439,7 @@ class Monster extends Actor {
   }
 
   /// Invokes [callback] on all nearby monsters that can see this one.
-  void _updateWitnesses(callback(Monster monster)) {
+  void _updateWitnesses(void Function(Monster monster) callback) {
     for (var other in game.stage.actors) {
       if (other == this) continue;
 

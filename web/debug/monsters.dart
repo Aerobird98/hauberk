@@ -11,7 +11,7 @@ import 'histogram.dart';
 final validator = html.NodeValidatorBuilder.common()..allowInlineStyles();
 final breedDrops = <Breed, Histogram<String>>{};
 
-main() {
+void main() {
   createContent();
 
   var breeds = Monsters.breeds.all.toList();
@@ -46,8 +46,9 @@ main() {
     var glyph = breed.appearance as Glyph;
 
     var count = breed.countMin.toString();
-    if (breed.countMax != breed.countMin)
+    if (breed.countMax != breed.countMin) {
       count += "&thinsp;&ndash;&thinsp;${breed.countMax}";
+    }
 
     text.write('''
         <tr>

@@ -18,7 +18,7 @@ final validator = html.NodeValidatorBuilder.common()..allowInlineStyles();
 
 Content content = createContent();
 
-main() {
+void main() {
   for (var i = 1; i <= Option.maxDepth; i++) {
     generated[i] = 0;
   }
@@ -77,7 +77,7 @@ void generateTable() {
   for (var depth = 1; depth <= 100; depth++) {
     text.write('<tr id="$depth"><td>$depth</td>');
 
-    renderColumn(Histogram<String> histogram) {
+    void renderColumn(Histogram<String> histogram) {
       text.write('<td width="25%">');
       var more = 0;
       for (var name in histogram.descending()) {

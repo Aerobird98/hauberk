@@ -60,7 +60,7 @@ _AffixBuilder affix(String name, double frequency) {
     name = name.substring(2);
     isPrefix = false;
   } else {
-    throw 'Affix "$name" must start or end with "_".';
+    throw ArgumentError('Affix "$name" must start or end with "_".');
   }
 
   return _affix = _AffixBuilder(name, isPrefix, frequency);
@@ -235,7 +235,7 @@ class _ItemBuilder extends _BaseBuilder {
 
     var description = "Detects $typeDescription";
     if (range != null) {
-      description += "up to $range steps away";
+      description += " up to $range steps away";
     }
 
     use("$description.", () => DetectAction(types, range));
@@ -316,7 +316,7 @@ class _ItemBuilder extends _BaseBuilder {
 
     if (range != null) {
       use("Illuminates out to a range of $range.",
-          () => IlluminateSelfAction(range, level + 1));
+          () => IlluminateSelfAction(range));
     }
   }
 }

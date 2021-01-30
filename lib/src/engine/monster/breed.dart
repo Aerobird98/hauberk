@@ -45,7 +45,7 @@ class Breed {
   String get name => Log.singular(_name);
 
   /// Untyped so the engine isn't coupled to how monsters appear.
-  final appearance;
+  final Object appearance;
 
   /// The breeds's depth.
   ///
@@ -185,7 +185,7 @@ class Breed {
     }
 
     // Time spent using moves is not time spent attacking.
-    attackTotal *= (1.0 - moveRateTotal);
+    attackTotal *= 1.0 - moveRateTotal;
 
     // Add in moves and attacks.
     exp *= attackTotal + moveTotal;
@@ -255,7 +255,7 @@ enum SpawnLocation {
   corner,
 }
 
-typedef void AddMonster(Breed breed);
+typedef AddMonster = void Function(Breed breed);
 
 abstract class Spawn {
   void spawnBreed(int depth, AddMonster addMonster);
@@ -310,14 +310,13 @@ class BreedFlags {
   }
 
   String toString() {
-    var names = [];
-    if (berzerk) names.add("berzerk");
-    if (cowardly) names.add("cowardly");
-    if (fearless) names.add("fearless");
-    if (immobile) names.add("immobile");
-    if (protective) names.add("protective");
-    if (unique) names.add("unique");
-
-    return names.join(" ");
+    return [
+      if (berzerk) "berzerk",
+      if (cowardly) "cowardly",
+      if (fearless) "fearless",
+      if (immobile) "immobile",
+      if (protective) "protective",
+      if (unique) "unique",
+    ].join(" ");
   }
 }

@@ -107,7 +107,7 @@ class TargetDialog extends Screen<Input> {
   }
 
   bool keyDown(int keyCode, {bool shift, bool alt}) {
-    if (keyCode == KeyCode.tab && !_monsters.isEmpty) {
+    if (keyCode == KeyCode.tab && _monsters.isNotEmpty) {
       _targetingFloor = !_targetingFloor;
       if (!_targetingFloor) {
         // Target the nearest monster to the floor tile we were previously
@@ -277,14 +277,14 @@ class TargetDialog extends Screen<Input> {
       }
     }
 
-    var nearest = _findLowest(ahead,
+    var nearest = _findLowest<Monster>(ahead,
         (monster) => (monster.pos - _gameScreen.currentTarget).lengthSquared);
     if (nearest != null) {
       _gameScreen.targetActor(nearest);
       return;
     }
 
-    var farthest = _findHighest(behind,
+    var farthest = _findHighest<Monster>(behind,
         (monster) => (monster.pos - _gameScreen.currentTarget).lengthSquared);
     if (farthest != null) {
       _gameScreen.targetActor(farthest);
@@ -316,7 +316,7 @@ class TargetDialog extends Screen<Input> {
       if (tile.isExplored && tile.blocksView) return true;
     }
 
-    throw "unreachable";
+    throw AssertionError("Unreachable.");
   }
 }
 

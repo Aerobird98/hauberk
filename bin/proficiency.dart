@@ -5,17 +5,19 @@ import 'package:hauberk/src/content.dart';
 Content content;
 Game game;
 
-main(List<String> arguments) {
+void main(List<String> arguments) {
   content = createContent();
 
   for (var heroClass in content.classes) {
     print(heroClass.name);
     for (var skill in content.skills) {
-      String line = "";
+      var line = "";
       if (skill is Discipline) {
+        var buffer = StringBuffer();
         for (var level = 1; level <= skill.maxLevel; level++) {
           var training = skill.trainingNeeded(heroClass, level);
-          line += training.toString().padLeft(6);
+          buffer.write(training.toString().padLeft(6));
+          line = buffer.toString();
         }
       } else if (skill is Spell) {
         if (heroClass.proficiency(skill) != 0.0) {

@@ -1,11 +1,11 @@
 /// These actions are side effects from taking elemental damage.
 import 'package:piecemeal/piecemeal.dart';
 
+import '../../engine.dart';
 import '../elements.dart';
 import '../tiles.dart';
-import '../../engine.dart';
 
-abstract class ElementActionMixin implements Action {
+mixin ElementActionMixin implements Action {
   void hitTile(Hit hit, Vec pos, num distance, [int fuel = 0]) {
     // Open tiles if the given motility lets us go through them.
     var tile = game.stage[pos];

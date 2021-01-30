@@ -99,7 +99,7 @@ class SidebarPanel extends Panel {
 
   void _drawStats(Hero hero, Terminal terminal, int y) {
     var x = 1;
-    drawStat(StatBase stat) {
+    void drawStat(StatBase stat) {
       terminal.writeAt(x, y, stat.name.substring(0, 3), UIHue.helpText);
       terminal.writeAt(
           x, y + 1, stat.value.toString().padLeft(3), UIHue.primary);
@@ -192,7 +192,7 @@ class SidebarPanel extends Panel {
 
   /// Draws a labeled numeric stat.
   void _drawStat(
-      Terminal terminal, int y, String label, value, Color valueColor,
+      Terminal terminal, int y, String label, Object value, Color valueColor,
       [int max, Color maxColor]) {
     terminal.writeAt(1, y, label, UIHue.helpText);
 
@@ -216,7 +216,7 @@ class SidebarPanel extends Panel {
     // Show conditions.
     var x = 3;
 
-    drawCondition(String char, Color fore, [Color back]) {
+    void drawCondition(String char, Color fore, [Color back]) {
       // Don't overlap other stuff.
       if (x > 8) return;
 

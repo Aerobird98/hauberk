@@ -9,7 +9,7 @@ import 'engine.dart';
 /// the engine to punch debug info all the way to where the UI can get it. It
 /// should not be used outside of a debugging scenario.
 class Debug {
-  static const enabled = false;
+  static const enabled = true;
 
   /// If true, all monsters are rendered, regardless of in-game visibility.
   static bool showAllMonsters = false;
@@ -113,26 +113,26 @@ class _MonsterLog {
 
     var barChars = " ▁▂▃▄▅▆▇█";
     for (var name in statNames) {
-      var bar = "${name.padRight(length)} ";
+      var barBuffer = StringBuffer("${name.padRight(length)} ");
       var showBar = false;
 
       var values = stats[name];
       for (var value in values) {
         var i = (value * barChars.length).ceil().clamp(0, barChars.length - 1);
-        bar += barChars[i];
+        barBuffer.write(barChars[i]);
         if (i > 0) showBar = true;
       }
 
       if (values.isNotEmpty) {
-        bar += " ${values.last.toStringAsFixed(4).padLeft(6)}";
+        barBuffer.write(" ${values.last.toStringAsFixed(4).padLeft(6)}");
       }
 
       if (statReason[name] != null) {
-        bar += " ${statReason[name]}";
+        barBuffer.write(" ${statReason[name]}");
         showBar = true;
       }
 
-      if (showBar) buffer.writeln(bar);
+      if (showBar) buffer.writeln(barBuffer.toString());
     }
 
     buffer.writeAll(log, "\n");

@@ -22,7 +22,7 @@ int get depth {
   return int.parse(depthSelect.value);
 }
 
-main() {
+void main() {
   var depthSelect = html.querySelector("#depth") as html.SelectElement;
   for (var i = 1; i <= Option.maxDepth; i++) {
     depthSelect.append(html.OptionElement(
@@ -55,7 +55,7 @@ void generate() {
     print(event);
   }
 
-  addItem(Item item) {
+  void addItem(Item item) {
     items.add(item.type.name);
 
     if (item.prefix != null) affixes.add("${item.prefix.name} _");
@@ -88,7 +88,7 @@ void generateTable() {
 
   text.write('<tr>');
 
-  renderColumn(Histogram<String> histogram, int max) {
+  void renderColumn(Histogram<String> histogram, int max) {
     text.write('<td width="25%">');
     for (var name in histogram.descending()) {
       var count = histogram.count(name);

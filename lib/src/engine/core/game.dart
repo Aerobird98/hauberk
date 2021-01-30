@@ -3,15 +3,15 @@ import 'dart:collection';
 import 'package:piecemeal/piecemeal.dart';
 
 import '../action/action.dart';
-import '../items/affix.dart';
-import '../items/item_type.dart';
-import '../items/shop.dart';
 import '../hero/hero.dart';
 import '../hero/hero_class.dart';
 import '../hero/hero_save.dart';
 import '../hero/lore.dart';
 import '../hero/race.dart';
 import '../hero/skill.dart';
+import '../items/affix.dart';
+import '../items/item_type.dart';
+import '../items/shop.dart';
 import '../monster/breed.dart';
 import '../stage/stage.dart';
 import 'actor.dart';
@@ -30,7 +30,7 @@ class Game {
   final _reactions = <Action>[];
 
   /// The events that have occurred since the last call to [update()].
-  final _events = List<Event>();
+  final _events = <Event>[];
 
   /// The energy that tracks when the substances are ready to update.
   final _substanceEnergy = Energy();
@@ -179,7 +179,7 @@ class Game {
   }
 
   void addEvent(EventType type,
-      {Actor actor, Element element, other, Vec pos, Direction dir}) {
+      {Actor actor, Element element, Object other, Vec pos, Direction dir}) {
     _events.add(Event(type, actor, element, pos, dir, other));
   }
 
@@ -274,7 +274,7 @@ class GameResult {
 
   /// Returns `true` if the game state has progressed to the point that a change
   /// should be shown to the user.
-  bool get needsRefresh => madeProgress || events.length > 0;
+  bool get needsRefresh => madeProgress || events.isNotEmpty;
 
   GameResult(this.madeProgress);
 }
@@ -286,7 +286,7 @@ class Event {
   final EventType type;
   final Actor actor;
   final Element element;
-  final other;
+  final Object other;
   final Vec pos;
   final Direction dir;
 
@@ -355,7 +355,7 @@ class EventType {
   /// A spear's stab attack hits a tile.
   static const stab = EventType("stab");
 
-  /// The hero picks up gold worth [other].
+  /// The hero picks up gold worth [Event.other].
   static const gold = EventType("gold");
 
   static const openBarrel = EventType("openBarrel");

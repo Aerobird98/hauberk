@@ -20,11 +20,10 @@ const simulationRounds = 20;
 Content content;
 Game game;
 
-var actions = Queue<Action>();
+final actions = Queue<Action>();
+final breeds = <int, Breed>{};
 
-var breeds = <int, Breed>{};
-
-main(List<String> arguments) {
+void main(List<String> arguments) {
   content = createContent();
 
   for (var strength = 10; strength <= 60; strength += 5) {
@@ -82,7 +81,7 @@ void runTrial(int strength, int agility, int fortitude, List<ItemType> gear,
   var match = findMatch(save);
 
   var stuff = gear.map((type) => type.name).join(" ");
-  var line = "str:${strength} agi:${agility} for:${fortitude} $stuff";
+  var line = "str:$strength agi:$agility for:$fortitude $stuff";
   if (results != null) {
     results[line] = match;
   } else {

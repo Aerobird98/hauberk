@@ -4,8 +4,8 @@ import 'package:piecemeal/piecemeal.dart';
 
 import 'stage.dart';
 
-/// Calculates the [Hero]'s field of view of the dungeon -- which tiles are
-/// occluded by other tiles and which are not.
+/// Calculates the hero's field of view of the dungeon, which tiles are occluded
+/// by other tiles and which are not.
 class Fov {
   static const _maxViewDistance = 24;
 
@@ -26,7 +26,7 @@ class Fov {
 
   Fov(this._stage);
 
-  /// Updates the visible flags in [stage] given the [Hero]'s [pos].
+  /// Updates the visible flags in [_stage] given the hero's [pos].
   void refresh(Vec pos) {
     if (_stage.game.hero.blindness.isActive) {
       _hideAll();
@@ -59,7 +59,7 @@ class Fov {
 
     _shadows = <_Shadow>[];
 
-    final bounds = _stage.bounds;
+    var bounds = _stage.bounds;
     var fullShadow = false;
 
     // Sweep through the rows ('rows' may be vertical or horizontal based on
@@ -115,7 +115,7 @@ class Fov {
     }
   }
 
-  /// Creates a [Shadow] that corresponds to the projected silhouette of the
+  /// Creates a [_Shadow] that corresponds to the projected silhouette of the
   /// given tile. This is used both to determine visibility (if any of the
   /// projection is visible, the tile is) and to add the tile to the shadow map.
   ///
@@ -135,7 +135,7 @@ class Fov {
 
   bool _isInShadow(_Shadow projection) {
     // Check the shadow list.
-    for (final shadow in _shadows) {
+    for (var shadow in _shadows) {
       if (shadow.contains(projection)) return true;
     }
 
@@ -153,10 +153,9 @@ class Fov {
     }
 
     // The new shadow is going here. See if it overlaps the previous or next.
-    var overlapsPrev =
-        ((index > 0) && (_shadows[index - 1].end > shadow.start));
+    var overlapsPrev = (index > 0) && (_shadows[index - 1].end > shadow.start);
     var overlapsNext =
-        ((index < _shadows.length) && (_shadows[index].start < shadow.end));
+        (index < _shadows.length) && (_shadows[index].start < shadow.end);
 
     // Insert and unify with overlapping shadows.
     if (overlapsNext) {

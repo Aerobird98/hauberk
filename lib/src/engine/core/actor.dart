@@ -35,20 +35,21 @@ abstract class Actor implements Noun {
   final resistances = <Element, ResistCondition>{};
 
   // All [Condition]s for the actor.
-  Iterable<Condition> get conditions => <Condition>[
+  Iterable<Condition> get conditions => [
         haste,
         cold,
         poison,
         blindness,
         dazzle,
         perception,
-      ]..addAll(resistances.values);
+        ...resistances.values
+      ];
 
   Vec _pos;
 
   Vec get pos => _pos;
 
-  void set pos(Vec value) {
+  set pos(Vec value) {
     if (value != _pos) {
       changePosition(_pos, value);
       _pos = value;
@@ -57,13 +58,13 @@ abstract class Actor implements Noun {
 
   int get x => pos.x;
 
-  void set x(int value) {
+  set x(int value) {
     pos = Vec(value, y);
   }
 
   int get y => pos.y;
 
-  void set y(int value) {
+  set y(int value) {
     pos = Vec(x, value);
   }
 
@@ -71,7 +72,7 @@ abstract class Actor implements Noun {
 
   int get health => _health;
 
-  void set health(int value) {
+  set health(int value) {
     _health = value.clamp(0, maxHealth);
   }
 
@@ -80,7 +81,9 @@ abstract class Actor implements Noun {
       resistances[element] = ResistCondition(element);
     }
 
-    conditions.forEach((condition) => condition.bind(this));
+    for (var condition in conditions) {
+      condition.bind(this);
+    }
   }
 
   Object get appearance;
@@ -91,7 +94,7 @@ abstract class Actor implements Noun {
 
   bool get isAlive => health > 0;
 
-  /// Whether or not the actor can be seen by the [Hero].
+  /// Whether or not the actor can be seen by the hero.
   bool get isVisibleToHero => game.stage[pos].isVisible;
 
   /// Whether the actor's vision is currently impaired.
@@ -149,7 +152,7 @@ abstract class Actor implements Noun {
   Iterable<Defense> onGetDefenses();
 
   Action getAction() {
-    final action = onGetAction();
+    var action = onGetAction();
     if (action != null) action.bind(this);
     return action;
   }
@@ -295,7 +298,9 @@ abstract class Actor implements Noun {
   void finishTurn(Action action) {
     energy.spend();
 
-    conditions.forEach((condition) => condition.update(action));
+    for (var condition in conditions) {
+      condition.update(action);
+    }
 
     if (isAlive) onFinishTurn(action);
   }

@@ -4,6 +4,7 @@ import 'package:piecemeal/piecemeal.dart';
 
 import '../core/element.dart';
 import '../hero/hero.dart';
+import '../items/equipment.dart';
 import '../items/inventory.dart';
 import '../items/item.dart';
 import 'action.dart';
@@ -237,8 +238,8 @@ class UseAction extends ItemAction {
   }
 }
 
-/// Base class for actions that permanently destroy items.
-abstract class DestroyActionMixin implements Action {
+/// Mixin for actions that permanently destroy items.
+mixin DestroyActionMixin implements Action {
   // TODO: Take damage into account when choosing the odds?
 
   /// Tries to destroy [items] with [element].

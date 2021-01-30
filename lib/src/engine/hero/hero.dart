@@ -29,14 +29,14 @@ class Hero extends Actor {
   final HeroSave save;
 
   /// Monsters the hero has already seen. Makes sure we don't double count them.
-  final Set<Monster> _seenMonsters = Set();
+  final Set<Monster> _seenMonsters = {};
 
   Behavior _behavior;
 
   /// Damage scales for each weapon being wielded, based on the weapon, other
   /// equipment, and stats.
   ///
-  /// This list parallels the sequence returned by [equipment.weapons].
+  /// This list parallels the sequence returned by `equipment.weapons`.
   final List<Property<double>> _heftScales = [Property(), Property()];
 
   /// How full the hero is.
@@ -116,7 +116,7 @@ class Hero extends Actor {
   }
 
   // TODO: Hackish.
-  get appearance => 'hero';
+  Object get appearance => 'hero';
 
   bool get needsInput {
     if (_behavior != null && !_behavior.canPerform(this)) {

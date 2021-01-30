@@ -98,7 +98,7 @@ abstract class Flow {
   ///
   /// If there are multiple equivalent positions, chooses one randomly. If
   /// there are none, returns null.
-  Vec bestWhere(bool predicate(Vec pos)) {
+  Vec bestWhere(bool Function(Vec pos) predicate) {
     var results = _findAllBestWhere(predicate);
     if (results.isEmpty) return null;
 
@@ -113,7 +113,7 @@ abstract class Flow {
 
     // Lazily search until we reach the tile in question or run out of paths to
     // try.
-    while (_costs[pos] == _unknown && _processNext());
+    while (_costs[pos] == _unknown && _processNext()) {}
 
     var distance = _costs[pos];
     if (distance == _unknown || distance == _unreachable) return null;
@@ -131,7 +131,7 @@ abstract class Flow {
   /// best positions matching [predicate].
   ///
   /// Returns [Direction.none] if no matching positions were found.
-  Direction directionToBestWhere(bool predicate(Vec pos)) {
+  Direction directionToBestWhere(bool Function(Vec pos) predicate) {
     var directions = directionsToBestWhere(predicate);
     if (directions.isEmpty) return Direction.none;
     return rng.item(directions);
@@ -141,7 +141,7 @@ abstract class Flow {
   /// positions matching [predicate].
   ///
   /// Returns an empty list if no matching positions were found.
-  List<Direction> directionsToBestWhere(bool predicate(Vec pos)) {
+  List<Direction> directionsToBestWhere(bool Function(Vec pos) predicate) {
     var goals = _findAllBestWhere(predicate);
     if (goals == null) return [];
 
@@ -154,10 +154,10 @@ abstract class Flow {
   /// positions meeting the criteria. Returns an empty list if no valid
   /// positions are found. Returned positions are local to [_costs], not
   /// the [Stage].
-  List<Vec> _findAllBestWhere(bool predicate(Vec pos)) {
+  List<Vec> _findAllBestWhere(bool Function(Vec pos) predicate) {
     var goals = <Vec>[];
 
-    var lowestCost;
+    int lowestCost;
     for (var i = 0;; i++) {
       // Lazily find the next open tile.
       while (i >= _found.length) {
@@ -191,12 +191,12 @@ abstract class Flow {
   ///
   /// Returns an empty list if none of the goals can be reached.
   List<Direction> _directionsTo(List<Vec> goals) {
-    var walked = Set<Vec>();
-    var directions = Set<Direction>();
+    var walked = <Vec>{};
+    var directions = <Direction>{};
 
     // Starting at [pos], recursively walk along all paths that proceed towards
     // [start].
-    walkBack(Vec pos) {
+    void walkBack(Vec pos) {
       if (walked.contains(pos)) return;
       walked.add(pos);
 
@@ -228,7 +228,7 @@ abstract class Flow {
     var parentCost = _costs[start];
 
     // Propagate to neighboring tiles.
-    processNeighbor(Direction dir, bool isDiagonal) {
+    void processNeighbor(Direction dir, bool isDiagonal) {
       var here = start + dir;
 
       if (!_costs.bounds.contains(here)) return;

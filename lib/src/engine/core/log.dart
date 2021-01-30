@@ -51,10 +51,12 @@ class Log {
 
       if (i - start >= width) {
         // No space to break at, so character wrap.
-        if (wordBreak == null) wordBreak = i;
+        wordBreak ??= i;
         lines.add(text.substring(start, wordBreak).trim());
         start = wordBreak;
-        while (start < text.length && text[start] == ' ') start++;
+        while (start < text.length && text[start] == ' ') {
+          start++;
+        }
       }
     }
 
@@ -94,8 +96,8 @@ class Log {
     message = _format(message, noun1, noun2, noun3);
 
     // See if it's a repeat of the last message.
-    if (messages.length > 0) {
-      final last = messages.last;
+    if (messages.isNotEmpty) {
+      var last = messages.last;
       if (last.text == message) {
         // It is, so just repeat the count.
         last.count++;
@@ -154,14 +156,14 @@ class Log {
   /// A series of letters enclosed in square brackets defines an optional verb
   /// suffix. If noun 1 is second person, then the contents will be included.
   /// Otherwise they are omitted. For example, `open[s]` will result in `open`
-  /// if noun 1 is second-person (i.e. the [Hero]) or `opens` if third-person.
+  /// if noun 1 is second-person (i.e. the hero) or `opens` if third-person.
   ///
   /// ### Irregular verbs: `[second|third]`
   ///
   /// Two words in square brackets separated by a pipe (`|`) defines an
   /// irregular verb. If noun 1 is second person that the first word is used,
   /// otherwise the second is. For example `[are|is]` will result in `are` if
-  /// noun 1 is second-person (i.e. the [Hero]) or `is` if third-person.
+  /// noun 1 is second-person (i.e. the hero) or `is` if third-person.
   ///
   /// ### Sentence case
   ///
@@ -170,9 +172,9 @@ class Log {
   String _format(String text, [Noun noun1, Noun noun2, Noun noun3]) {
     var result = text;
 
-    final nouns = [noun1, noun2, noun3];
-    for (int i = 1; i <= 3; i++) {
-      final noun = nouns[i - 1];
+    var nouns = [noun1, noun2, noun3];
+    for (var i = 1; i <= 3; i++) {
+      var noun = nouns[i - 1];
 
       if (noun != null) {
         result = result.replaceAll('{$i}', noun.nounText);
@@ -268,11 +270,11 @@ class Noun {
 
 class Pronoun {
   // See http://en.wikipedia.org/wiki/English_personal_pronouns.
-  static final you = const Pronoun('you', 'you', 'your');
-  static final she = const Pronoun('she', 'her', 'her');
-  static final he = const Pronoun('he', 'him', 'his');
-  static final it = const Pronoun('it', 'it', 'its');
-  static final they = const Pronoun('they', 'them', 'their');
+  static const you = Pronoun('you', 'you', 'your');
+  static const she = Pronoun('she', 'her', 'her');
+  static const he = Pronoun('he', 'him', 'his');
+  static const it = Pronoun('it', 'it', 'its');
+  static const they = Pronoun('they', 'them', 'their');
 
   final String subjective;
   final String objective;

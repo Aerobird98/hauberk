@@ -27,7 +27,7 @@ Drop dropAllOf(List<Drop> drops) => _AllOfDrop(drops);
 /// Creates a [Drop] that drops one of [drops] based on their frequency.
 Drop dropOneOf(Map<Drop, double> drops) => _OneOfDrop(drops);
 
-Drop repeatDrop(int count, drop, [int depth]) {
+Drop repeatDrop(int count, Object drop, [int depth]) {
   if (drop is String) drop = parseDrop(drop, depth: depth);
   return _RepeatDrop(count, drop);
 }
@@ -94,7 +94,9 @@ class _AllOfDrop implements Drop {
   _AllOfDrop(this._drops);
 
   void dropItem(int depth, AddItem addItem) {
-    for (var drop in _drops) drop.dropItem(depth, addItem);
+    for (var drop in _drops) {
+      drop.dropItem(depth, addItem);
+    }
   }
 }
 

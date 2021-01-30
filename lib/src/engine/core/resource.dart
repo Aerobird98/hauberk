@@ -111,11 +111,11 @@ class ResourceSet<T> {
 
   bool tagExists(String tagName) => _tags.containsKey(tagName);
 
-  /// Chooses a random resource in [tagName] for [depth].
+  /// Chooses a random resource in [tag] for [depth].
   ///
-  /// Includes all resources of child tags of [tagName]. For example, given tag
-  /// path "equipment/weapon/sword", if [tagName] is "weapon", this will permit
-  /// resources tagged "weapon" or "sword", with equal probability.
+  /// Includes all resources of child tags of [tag]. For example, given tag path
+  /// "equipment/weapon/sword", if [tag] is "weapon", this will permit resources
+  /// tagged "weapon" or "sword", with equal probability.
   ///
   /// Resources in parent tags, or in children of those tags, are also possible,
   /// but with less probability. So in the above example, anything tagged
@@ -184,7 +184,8 @@ class ResourceSet<T> {
     });
   }
 
-  T _runQuery(String name, int depth, double scale(_Resource<T> resource)) {
+  T _runQuery(
+      String name, int depth, double Function(_Resource<T> resource) scale) {
     // Reuse a cached query, if possible.
     var key = _QueryKey(name, depth);
     var query = _queries[key];
@@ -228,12 +229,10 @@ class _Resource<T> {
   final double startFrequency;
   final double endFrequency;
 
-  final Set<_Tag<T>> _tags = Set();
+  final Set<_Tag<T>> _tags = {};
 
   _Resource(this.object, this.startDepth, this.endDepth, this.startFrequency,
-      this.endFrequency) {
-    if (startDepth == null) throw "!";
-  }
+      this.endFrequency);
 
   /// The resource's frequency at [depth].
   ///
@@ -315,9 +314,9 @@ class _QueryKey {
 
   int get hashCode => name.hashCode ^ depth.hashCode;
 
-  bool operator ==(other) {
-    assert(other is _QueryKey);
-    return name == other.name && depth == other.depth;
+  bool operator ==(Object other) {
+    var query = other as _QueryKey;
+    return name == query.name && depth == query.depth;
   }
 
   String toString() => "$name ($depth)";
@@ -335,8 +334,8 @@ class _QueryKey {
 ///
 /// The first two steps are quite slow: they involve iterating over all
 /// resources, allocating a list, etc. Fortunately, we can reuse the results of
-/// them for every call to [tryChoose] or [tryChooseMatching] with the same
-/// arguments.
+/// them for every call to [ResourceSet.tryChoose] or
+/// [ResourceSet.tryChooseMatching] with the same arguments.
 ///
 /// This caches that state.
 class _ResourceQuery<T> {

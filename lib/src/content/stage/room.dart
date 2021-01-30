@@ -215,7 +215,7 @@ class Room {
     for (var pos in room.bounds) {
       if (!room[pos].isUnused) continue;
 
-      isFloor(Direction dir) {
+      bool isFloor(Direction dir) {
         var here = pos + dir;
         if (!room.bounds.contains(here)) return false;
         return room[here].isTile;
@@ -268,8 +268,6 @@ class RoomTile {
   RoomTile.junction(this.direction) : tile = null;
 
   RoomTile.tile(this.tile) : direction = Direction.none;
-
-  const RoomTile._(this.tile, this.direction);
 
   bool get isUnused => tile == null && direction == Direction.none;
 

@@ -22,7 +22,7 @@ class Decorator {
 
   /// The unique breeds that have already been placed on the stage. Ensures we
   /// don't spawn the same unique more than once.
-  var _spawnedUniques = Set<Breed>();
+  final _spawnedUniques = <Breed>{};
 
   Decorator(this._architect);
 
@@ -190,7 +190,7 @@ class Decorator {
 
   Iterable<String> _spawnMonsters() sync* {
     // Let the architectures that control their own monsters go.
-    var spawned = Set<Architecture>();
+    var spawned = <Architecture>{};
     _tilesByArchitecture.forEach((architecture, tiles) {
       if (architecture == null) return;
 
@@ -290,7 +290,7 @@ class Decorator {
     var isCorpse = !breed.flags.unique && rng.oneIn(10);
 
     var experience = 0;
-    spawn(Breed breed, Vec pos) {
+    void spawn(Breed breed, Vec pos) {
       if (_architect.stage.actorAt(pos) != null) return;
       if (!_canSpawn(breed)) return;
 
@@ -435,7 +435,7 @@ class DensityMap {
 
   int operator [](Vec pos) => _density[pos];
 
-  operator []=(Vec pos, int value) {
+  void operator []=(Vec pos, int value) {
     var old = _density[pos];
     _total = _total - old + value;
     _density[pos] = value;
@@ -461,7 +461,7 @@ class DensityMap {
       n -= density;
     }
 
-    throw "unreachable";
+    throw AssertionError("Unreachable.");
   }
 
   void reduceAround(Stage stage, Vec start, Motility motility, int range) {

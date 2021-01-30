@@ -42,9 +42,8 @@ class Stage {
   /// doesn't step on other actors.
   final Array2D<Actor> _actorsByTile;
 
-  Stage(int width, int height, Game game)
-      : game = game,
-        tiles = Array2D.generated(width, height, () => Tile()),
+  Stage(int width, int height, this.game)
+      : tiles = Array2D.generated(width, height, () => Tile()),
         _actorsByTile = Array2D(width, height) {
     _lighting = Lighting(this);
     _sound = Sound(this);
@@ -171,7 +170,7 @@ class Stage {
 
   /// Iterates over every item on the stage and returns the item and its
   /// position.
-  void forEachItem(callback(Item item, Vec pos)) {
+  void forEachItem(void Function(Item item, Vec pos) callback) {
     _itemsByTile.forEach((pos, inventory) {
       for (var item in inventory) {
         callback(item, pos);
@@ -211,7 +210,7 @@ class Stage {
     _lighting.dirtyVisibility();
   }
 
-  /// Marks this tile at [pos] as explored if the hero can see it and hasn't
+  /// Marks the tile at [x],[y] as explored if the hero can see it and hasn't
   /// previously explored it.
   void exploreAt(int x, int y, {bool force}) {
     var tile = tiles.get(x, y);

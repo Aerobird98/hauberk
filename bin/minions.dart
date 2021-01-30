@@ -4,7 +4,7 @@ import 'package:hauberk/src/content/monster/monsters.dart';
 
 const trials = 1000;
 
-main() {
+void main() {
   Monsters.initialize();
 
   for (var breed in Monsters.breeds.all) {
@@ -24,7 +24,7 @@ main() {
     for (var minion in histogram.descending()) {
       var count =
           (histogram.count(minion) / trials).toStringAsFixed(2).padLeft(4);
-      print("- $count ${minion}");
+      print("- $count $minion");
     }
   }
 }

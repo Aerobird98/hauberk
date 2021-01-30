@@ -17,7 +17,7 @@ final _fonts = <TerminalFont>[];
 UserInterface<Input> _ui;
 TerminalFont _font;
 
-final Set<Monster> _debugMonsters = Set();
+final Set<Monster> _debugMonsters = {};
 
 class TerminalFont {
   final String name;
@@ -30,7 +30,7 @@ class TerminalFont {
       {this.charWidth, this.charHeight});
 }
 
-main() {
+void main() {
   var content = createContent();
 
   _addFont("8x8", 8);
@@ -142,7 +142,9 @@ main() {
   _ui.keyPress.bind(Input.runSE, KeyCode.numpad3, shift: true);
 
   _ui.keyPress.bind(Input.ok, KeyCode.numpad5);
+  _ui.keyPress.bind(Input.ok, KeyCode.numpadEnter);
   _ui.keyPress.bind(Input.rest, KeyCode.numpad5, shift: true);
+  _ui.keyPress.bind(Input.rest, KeyCode.numpadEnter, shift: true);
   _ui.keyPress.bind(Input.fire, KeyCode.numpad5, alt: true);
 
   _ui.keyPress.bind(Input.wizard, KeyCode.w, shift: true, alt: true);
@@ -271,7 +273,7 @@ void _fullscreen() {
   }
 }
 
-void _refreshDebugBoxes() async {
+Future<void> _refreshDebugBoxes() async {
   // Hack: Give the engine a chance to update.
   await html.window.animationFrame;
 

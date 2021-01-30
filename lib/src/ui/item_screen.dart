@@ -45,8 +45,6 @@ abstract class ItemScreen extends Screen<Input> {
 
   String get _headerText;
 
-  String get _verb => throw "Subclass should implement";
-
   Map<String, String> get _helpKeys;
 
   ItemScreen._(this._gameScreen);
@@ -102,6 +100,12 @@ abstract class ItemScreen extends Screen<Input> {
 //      return true;
 //    }
 
+    if (_shiftDown && keyCode == KeyCode.escape) {
+      _inspected = null;
+      dirty();
+      return true;
+    }
+
     if (keyCode >= KeyCode.a && keyCode <= KeyCode.z) {
       var index = keyCode - KeyCode.a;
       if (index >= _items.slots.length) return false;
@@ -156,31 +160,24 @@ abstract class ItemScreen extends Screen<Input> {
     // Don't show the help if another dialog (like buy or sell) is on top with
     // its own help.
     if (_isActive) {
-      Draw.helpKeys(terminal, _shiftDown ? {"A-Z": "Inspect item"} : _helpKeys,
-          _shiftDown ? "Inspect which item?" : _headerText);
+      if (_shiftDown) {
+        Draw.helpKeys(
+            terminal,
+            {
+              "A-Z": "Inspect item",
+              if (_inspected != null) "Esc": "Hide inspector"
+            },
+            "Inspect which item?");
+      } else {
+        Draw.helpKeys(terminal, _helpKeys, _headerText);
+      }
     }
-
-    terminal = terminal.rect(
-        _gameScreen.stagePanel.bounds.x,
-        _gameScreen.stagePanel.bounds.y,
-        _gameScreen.stagePanel.bounds.width,
-        _gameScreen.stagePanel.bounds.height);
-
-    Draw.frame(terminal, 0, 0, terminal.width - 34, _items.length + 2,
-        _canSelectAny ? UIHue.selection : UIHue.disabled);
-    terminal.writeAt(
-        2, 0, " ${_items.name} ", _canSelectAny ? UIHue.selection : UIHue.text);
 
     var view = _TownItemView(this);
-    view.render(terminal.rect(1, 1, terminal.width - 36, terminal.height - 5));
-
-    if (_inspected != null) {
-      var y = view.itemY(_inspected) + 1;
-      y = y.clamp(0, terminal.height - 20);
-
-      drawInspector(
-          terminal.rect(terminal.width - 34, y, 34, 20), _save, _inspected);
-    }
+    var width =
+        math.min(ItemView.preferredWidth, _gameScreen.stagePanel.bounds.width);
+    view.render(terminal, _gameScreen.stagePanel.bounds.x,
+        _gameScreen.stagePanel.bounds.y, width, _items.length);
 
 //    if (completeRecipe != null) {
 //      terminal.writeAt(59, 2, "Press [Space] to forge item!", UIHue.selection);
@@ -237,10 +234,19 @@ abstract class ItemScreen extends Screen<Input> {
   void _afterTransfer(Item item, int count) {}
 }
 
+/// Base class for item views where the player is performing an action.
+abstract class _ItemVerbScreen extends ItemScreen {
+  String get _verb;
+
+  _ItemVerbScreen(GameScreen gameScreen) : super._(gameScreen);
+}
+
 class _TownItemView extends ItemView {
   final ItemScreen _screen;
 
   _TownItemView(this._screen);
+
+  HeroSave get save => _screen._gameScreen.game.hero.save;
 
   ItemCollection get items => _screen._items;
 
@@ -248,7 +254,9 @@ class _TownItemView extends ItemView {
 
   bool get showPrices => _screen._showPrices;
 
-  Item get inspectedItem => _screen._inspected;
+  Item get inspectedItem => _screen._isActive ? _screen._inspected : null;
+
+  bool get inspectorOnRight => true;
 
   bool get canSelectAny => _screen._shiftDown || _screen._canSelectAny;
 
@@ -295,7 +303,7 @@ class _HomeViewScreen extends ItemScreen {
 }
 
 /// Screen to get items from the hero's home.
-class _HomeGetScreen extends ItemScreen {
+class _HomeGetScreen extends _ItemVerbScreen {
   String get _headerText => "Get which item?";
 
   String get _verb => "Get";
@@ -307,7 +315,7 @@ class _HomeGetScreen extends ItemScreen {
 
   ItemCollection get _destination => _gameScreen.game.hero.inventory;
 
-  _HomeGetScreen(GameScreen gameScreen) : super._(gameScreen);
+  _HomeGetScreen(GameScreen gameScreen) : super(gameScreen);
 
   bool get _canSelectAny => true;
 
@@ -363,7 +371,7 @@ class _ShopViewScreen extends ItemScreen {
 }
 
 /// Screen to buy items from a shop.
-class _ShopBuyScreen extends ItemScreen {
+class _ShopBuyScreen extends _ItemVerbScreen {
   final Inventory _shop;
 
   String get _headerText => "Buy which item?";
@@ -377,7 +385,7 @@ class _ShopBuyScreen extends ItemScreen {
 
   ItemCollection get _destination => _gameScreen.game.hero.save.inventory;
 
-  _ShopBuyScreen(GameScreen gameScreen, this._shop) : super._(gameScreen);
+  _ShopBuyScreen(GameScreen gameScreen, this._shop) : super(gameScreen);
 
   bool get _canSelectAny => true;
   bool get _showPrices => true;
@@ -407,8 +415,8 @@ class _ShopBuyScreen extends ItemScreen {
 
 /// Screen to let the player choose a count for a selected item.
 class _CountScreen extends ItemScreen {
-  /// The [ItemScreen] that pushed this.
-  final ItemScreen _parent;
+  /// The [_ItemVerbScreen] that pushed this.
+  final _ItemVerbScreen _parent;
   final Item _item;
   int _count;
 

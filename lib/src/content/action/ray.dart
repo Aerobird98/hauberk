@@ -16,7 +16,7 @@ abstract class RayActionBase extends Action {
 
   /// The tiles that have already been touched by the effect. Used to make sure
   /// we don't hit the same tile multiple times.
-  final _hitTiles = Set<Vec>();
+  final _hitTiles = <Vec>{};
 
   /// The cone incrementally spreads outward. This is how far we currently are.
   var _radius = 1.0;
@@ -30,10 +30,9 @@ abstract class RayActionBase extends Action {
   int get range;
 
   /// Creates a [RayActionBase] radiating from [_from] centered on [_to] (which
-  /// may be the same as [_from] if the ray is a full circle. It applies
-  /// [_hit] to each touched tile. The rays cover a chord whose width is
-  /// [fraction] which varies from 0 (an infinitely narrow line) to 1.0 (a full
-  /// circle.
+  /// may be the same as [_from] if the ray is a full circle. The rays cover a
+  /// chord whose width is [fraction] which varies from 0 (an infinitely narrow
+  /// line) to 1.0 (a full circle).
   RayActionBase(this._from, this._to, double fraction) {
     // We "fill" the cone by tracing a number of rays. We need enough of them
     // to ensure there are no gaps when the cone is at its maximum extent.

@@ -11,6 +11,7 @@ import 'hero.dart';
 import 'hero_class.dart';
 import 'hero_save.dart';
 import 'lore.dart';
+import 'stat.dart';
 
 /// An immutable unique skill a hero may learn.
 ///
@@ -91,7 +92,7 @@ abstract class Skill implements Comparable<Skill> {
 /// Some skills require additional data to be performed -- a target position
 /// or a direction. Those will implement one of the subclasses, [TargetSkill]
 /// or [DirectionSkill].
-abstract class UsableSkill implements Skill {
+mixin UsableSkill implements Skill {
   /// If the skill cannot currently be used (for example Archery when a bow is
   /// not equipped), returns the reason why. Otherwise, returns `null` to
   /// indicate the skill is usable.
@@ -99,26 +100,26 @@ abstract class UsableSkill implements Skill {
 }
 
 /// A skill that can be directly used to perform an action.
-abstract class ActionSkill implements UsableSkill {
+mixin ActionSkill implements UsableSkill {
   Action getAction(Game game, int level);
 }
 
 /// A skill that requires a target position to perform.
-abstract class TargetSkill implements UsableSkill {
+mixin TargetSkill implements UsableSkill {
   bool get canTargetSelf => false;
 
   /// The maximum range of the target from the hero.
   int getRange(Game game);
 
   /// Override this to create the [Action] that the [Hero] should perform when
-  /// using this [Command].
+  /// using this [Skill].
   Action getTargetAction(Game game, int level, Vec target);
 }
 
 /// A skill that requires a direction to perform.
-abstract class DirectionSkill implements UsableSkill {
+mixin DirectionSkill implements UsableSkill {
   /// Override this to create the [Action] that the [Hero] should perform when
-  /// using this [Command].
+  /// using this [Skill].
   Action getDirectionAction(Game game, int level, Direction dir);
 }
 
@@ -126,7 +127,7 @@ abstract class DirectionSkill implements UsableSkill {
 ///
 /// A discipline is "trained", which means to perform an in-game action related
 /// to the discipline. For example, killing monsters with a sword trains the
-/// [Swordfighting] discipline.
+/// Swordfighting discipline.
 ///
 /// The underlying data used to track progress in disciplines is stored in the
 /// hero's [Lore].

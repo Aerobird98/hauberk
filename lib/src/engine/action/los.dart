@@ -3,7 +3,7 @@ import 'package:piecemeal/piecemeal.dart';
 import '../core/actor.dart';
 import 'action.dart';
 
-/// Base class for an [Action] that traces a path from the actor along a [Los].
+/// Base class for an [Action] that traces a path from the actor along a [Line].
 abstract class LosAction extends Action {
   final Vec _target;
   Vec _lastPos;
@@ -56,7 +56,7 @@ abstract class LosAction extends Action {
   ///
   /// Return `true` if the LOS should stop here or `false` if it should keep
   /// going.
-  bool onHitActor(Vec pos, Actor actor) => true;
+  bool onHitActor(Vec pos, Actor target) => true;
 
   /// Override this to handle the LOS hitting a wall or going out of range.
   ///
